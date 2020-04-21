@@ -14,9 +14,9 @@ void set_log_level(int level) {
     log_line_level = level;
 }
 
-#define LOG_INFO_CONTENT(log_content)                                                                           \
-    if (log_line_level >= LOG_LINE_LEVEL_INFO) {                                                                \
-        fprintf(stderr, "info: [file:%s function:%s line:%d] %s\n", __FILE__, __func__, __LINE__, log_content); \
+#define LOG_INFO_CONTENT(log_format, ...)                                                                                     \
+    if (log_line_level >= LOG_LINE_LEVEL_INFO) {                                                                              \
+        fprintf(stderr, "info: [file:%s function:%s line:%d] " log_format "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
     }
 
 #define LOG_INFO_LINE()                                                                         \
@@ -24,9 +24,9 @@ void set_log_level(int level) {
         fprintf(stderr, "info: [file:%s function:%s line:%d]\n", __FILE__, __func__, __LINE__); \
     }
 
-#define LOG_ERROR_CONTENT(log_content)                                                                          \
-    if (log_line_level >= LOG_LINE_LEVEL_ERROR) {                                                               \
-        fprintf(stderr, "info: [file:%s function:%s line:%d] %s\n", __FILE__, __func__, __LINE__, log_content); \
+#define LOG_ERROR_CONTENT(log_format, ...)                                                                                    \
+    if (log_line_level >= LOG_LINE_LEVEL_ERROR) {                                                                             \
+        fprintf(stderr, "info: [file:%s function:%s line:%d] " log_format "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
     }
 
 #define LOG_ERROR_LINE()                                                                        \
@@ -34,9 +34,9 @@ void set_log_level(int level) {
         fprintf(stderr, "info: [file:%s function:%s line:%d]\n", __FILE__, __func__, __LINE__); \
     }
 
-#define LOG_DEBUG_CONTENT(log_content)                                                                          \
-    if (log_line_level >= LOG_LINE_LEVEL_DEBUG) {                                                               \
-        fprintf(stderr, "info: [file:%s function:%s line:%d] %s\n", __FILE__, __func__, __LINE__, log_content); \
+#define LOG_DEBUG_CONTENT(log_format, ...)                                                                                    \
+    if (log_line_level >= LOG_LINE_LEVEL_DEBUG) {                                                                             \
+        fprintf(stderr, "info: [file:%s function:%s line:%d] " log_format "\n", __FILE__, __func__, __LINE__, ##__VA_ARGS__); \
     }
 
 #define LOG_DEBUG_LINE()                                                                        \

@@ -48,9 +48,8 @@ public:
     shared_ptr(const shared_ptr< T > &another_shared) : __ptr(another_shared.__ptr), __cntptr(another_shared.__cntptr) {
         LOG_INFO_LINE();
         if (__cntptr) {
-            LOG_INFO_CONTENT("increase");
             __cntptr->increase();
-            printf("count:  %ld\n", __cntptr->use_count());
+            LOG_INFO_CONTENT("increase count:  %ld\n", __cntptr->use_count());
         }
     }
     shared_ptr(shared_ptr< T > &&another_shared) : __ptr(another_shared.__ptr), __cntptr(another_shared.__cntptr) {
@@ -58,16 +57,10 @@ public:
         another_shared.__ptr = 0;
         another_shared.__cntptr = 0;
     }
-
     // assignment
     shared_ptr &operator=(const shared_ptr< T > &another_ptr) {
         LOG_INFO_LINE();
-        printf("= before count:  %ld\n", this->use_count());
-        shared_ptr< T > a(another_ptr);
-        printf("= before a count:  %ld\n", a.use_count());
-        a.swap(*this);
-        printf("= after a count:  %ld\n", a.use_count());
-        printf("= after count:  %ld\n", this->use_count());
+        shared_ptr< T >(another_ptr).swap(*this);
         return *this;
     }
 
@@ -104,20 +97,8 @@ public:
         // swap __ptr
         thief_stl::swap(__ptr, another_shared.__ptr);
 
-        printf("=== before count:  %ld %p\n", this->use_count(), __cntptr);
         // swap __cntptr
-        printf("after swap:  %p\n", __cntptr);
-        printf("after swap:another  %p\n", another_shared.__cntptr);
-
         thief_stl::swap(__cntptr, another_shared.__cntptr);
-        printf("after swap:  %p\n", __cntptr);
-        printf("after swap:another  %p\n", another_shared.__cntptr);
-        if (__cntptr) {
-            printf("=== after count:  %ld %p\n", this->use_count(), __cntptr);
-        }
-        if (another_shared.__cntptr) {
-            printf("=== after count:  %ld %p\n", another_shared.use_count(), another_shared.__cntptr);
-        }
     }
 
     // observers
