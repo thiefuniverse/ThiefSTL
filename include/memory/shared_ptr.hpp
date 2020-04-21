@@ -3,8 +3,9 @@
 
 #include "algorithm.hpp"
 #include "log.hpp"
+#include "nullptr.hpp"
 #include "utility.hpp"
-#include <cstddef>
+//#include <cstddef>
 
 namespace thief_stl {
 
@@ -126,7 +127,7 @@ public:
     T &operator*() {
         return *__ptr;
     }
-    T &operator->() {
+    T *operator->() {
         return __ptr;
     }
     operator bool() {
@@ -141,18 +142,18 @@ public:
 
 //  make_shared
 template < typename _Tp, typename... _Args >
-shared_ptr< _Tp > make_shared(_Args... _args) {
-    return shared_ptr< _Tp >(thief_stl::forward< _Args >(_args)...);
+shared_ptr< _Tp > make_shared(_Args &&... _args) {
+    return shared_ptr< _Tp >(new _Tp(thief_stl::forward< _Args >(_args)...));
 }
 
 template < typename _Tp >
 shared_ptr< _Tp > make_shared() {
-    return shared_ptr< _Tp >();
+    return shared_ptr< _Tp >(new _Tp());
 }
 
 template < typename _Tp, typename _A0 >
 shared_ptr< _Tp > make_shared(_A0 _a0) {
-    return shared_ptr< _Tp >(_a0);
+    return shared_ptr< _Tp >(new _Tp(_a0));
 }
 
 };      // namespace thief_stl
