@@ -5,7 +5,6 @@
 #include "log.hpp"
 #include "nullptr.hpp"
 #include "utility.hpp"
-//#include <cstddef>
 
 namespace thief_stl {
 
