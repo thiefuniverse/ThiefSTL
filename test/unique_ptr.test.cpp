@@ -1,11 +1,12 @@
 #include <iostream>
-#include <memory>
 
 #ifdef TEST_THIEF_STL
 #include "log.hpp"
 #include "nullptr.hpp"
 #include "unique_ptr.hpp"
+#include "utility.hpp"
 #else
+#include <memory>
 namespace thief_stl = std;
 #endif
 
@@ -15,7 +16,7 @@ private:
 
 public:
     TestSmartPtr(int id) : _id(id) {
-        std::cout << "construct TestSmartPtr" << std::endl;
+        std::cout << "construct TestSmartPtr " << id << std::endl;
     }
     TestSmartPtr(int id1, int id2, int id3) : _id(id3) {
         std::cout << "construct TestSmartPtr" << std::endl;
@@ -34,60 +35,51 @@ public:
         std::cout << "current id: " << _id << std::endl;
     }
 };
-int main() {
 
+void RunOnce(thief_stl::unique_ptr< TestSmartPtr > ptr) {
+    ptr->print();
+    std::cout << "run once done" << std::endl;
+}
+int main() {
+    // set log level
 #ifdef TEST_THIEF_STL
     thief_stl::set_log_level(LOG_LINE_LEVEL_ERROR);
 #endif
-    thief_stl::shared_ptr< TestSmartPtr > s1(new TestSmartPtr(999));
-    std::cout << "s1 count: " << s1.use_count() << std::endl;
-    thief_stl::shared_ptr< TestSmartPtr > s2 = s1;
-    std::cout << "s1 count: " << s1.use_count() << std::endl;
-    std::cout << "s2 count: " << s2.use_count() << std::endl;
-    thief_stl::shared_ptr< TestSmartPtr > s3;
-    s3 = s2;
-    std::cout << "s3 count: " << s3.use_count() << std::endl;
-    { s2 = thief_stl::shared_ptr< TestSmartPtr >(new TestSmartPtr(1000)); }
-    std::cout << "s2 count: " << s2.use_count() << std::endl;
-    thief_stl::shared_ptr< TestSmartPtr > s4;
-    s2 = s4;
-    if (s2) {
-        std::cout << "test s2 bool true value" << std::endl;
-    }
-    std::cout << "s1 count: " << s1.use_count() << std::endl;
-    std::cout << "s2 count: " << s2.use_count() << std::endl;
-    std::cout << "s3 count: " << s3.use_count() << std::endl;
 
-    int nullptr_val = thief_stl::nullptr;
-    std::cout << "nullptr val: " << nullptr_val << std::endl;
-    thief_stl::nullptr_t null_a;
-
-    if (thief_stl::nullptr == thief_stl::nullptr) {
-        std::cout << "thief stl nullptr equal" << std::endl;
-    }
-    // test empty int* pointer
-    int *int_ptr = null_a;
-    std::cout << int_ptr << std::endl;
-    if (int_ptr == thief_stl::nullptr) {
-        std::cout << "thief stl nullptr with int ptr equal" << std::endl;
-    }
-    int i = 90;
-    int_ptr = &i;
-    if (int_ptr != thief_stl::nullptr) {
-        std::cout << "thief stl nullptr not equal" << std::endl;
+    // constructor, assignment
+    thief_stl::unique_ptr< TestSmartPtr > s1(new TestSmartPtr(999));
+    // thief_stl::unique_ptr< TestSmartPtr > s2 = s1;  // can't compile, call to deleted constructor
+    {
+        thief_stl::unique_ptr< TestSmartPtr > s2 = thief_stl::move(s1);
+        RunOnce(thief_stl::move(s2));
+        std::cout << "after run once" << std::endl;
     }
 
-    // test make_shared
-    auto s5 = thief_stl::make_shared< TestSmartPtr >(2000);
-    s2 = s5;
+    // release
+    thief_stl::unique_ptr< TestSmartPtr > s3(new TestSmartPtr(1000));
+    TestSmartPtr *s3_ptr = s3.release();
+    std::cout << "after s3 release" << std::endl;
+    delete s3_ptr;
 
-    auto s6 = thief_stl::make_shared< TestSmartPtr >(1000, 2000, 3000);
+    // get, reset, operator bool
+    thief_stl::unique_ptr< TestSmartPtr > s4(new TestSmartPtr(2000));
+    s4.get()->print();
+    (*s4).print();
 
-    // test operator overload function
-    (*s6).print();
-    s5->print();
-    std::cout << s4.get() << std::endl;
-    s2.get()->print();
+    if (s4) {
+        std::cout << "s4 now own some object" << std::endl;
+    }
+    s4.reset();
+    if (!s4) {
+        std::cout << "s4 now doesn't own some object" << std::endl;
+    }
+
+    thief_stl::unique_ptr< TestSmartPtr > s5(new TestSmartPtr(3000));
+    {
+        thief_stl::unique_ptr< TestSmartPtr > s6(new TestSmartPtr(4000));
+        s6.swap(s5);
+        std::cout << "swap done" << std::endl;
+    }
 
     return 0;
 }
