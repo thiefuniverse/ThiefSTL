@@ -40,6 +40,15 @@ void RunOnce(thief_stl::unique_ptr< TestSmartPtr > ptr) {
     ptr->print();
     std::cout << "run once done" << std::endl;
 }
+
+class MyDeleter {
+public:
+    void operator()(TestSmartPtr *t) {
+        std::cout << "use my deleter for TestSmartPtr" << std::endl;
+        delete t;
+    }
+};
+
 int main() {
     // set log level
 #ifdef TEST_THIEF_STL
@@ -81,5 +90,7 @@ int main() {
         std::cout << "swap done" << std::endl;
     }
 
+    // deleter
+    thief_stl::unique_ptr< TestSmartPtr, MyDeleter > s6(new TestSmartPtr(5000));
     return 0;
 }
