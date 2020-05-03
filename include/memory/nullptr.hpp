@@ -7,9 +7,6 @@ class nullptr_t {
 public:
     nullptr_t() {}
 
-    operator int() {
-        return 0;
-    }
     template < class T >
     operator T *() {
         return 0;
@@ -32,8 +29,8 @@ private:
 inline nullptr_t __get_nullptr() {
     return nullptr_t();
 }
-
-#define nullptr __get_nullptr()
 }  // namespace thief_stl
+
+#define nullptr thief_stl::__get_nullptr()
 
 #endif  // __NULLPTR_H_
