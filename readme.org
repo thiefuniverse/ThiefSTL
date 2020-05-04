@@ -5,6 +5,12 @@
 
 * Table of Contents :TOC_3:noexport:
 - [[#description][Description]]
+- [[#start-to-compile-it][Start to Compile It]]
 
 * Description
 One Wheel for STL
+
+
+* Start to Compile It
++ run run.sh.
++ if cmake option TEST_THIEF_STL is OFF, use std c++ lib.
